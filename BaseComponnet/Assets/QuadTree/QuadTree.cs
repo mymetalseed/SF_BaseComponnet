@@ -101,7 +101,7 @@ namespace QuadTree
         {
             if(_childA == null)
             {
-                for(int i = 0; i < bods.Count; ++i)
+                for(int i = 0; i < _bodies.Count; ++i)
                 {
                     bods.Add(_bodies[i]);
                 }
@@ -132,8 +132,8 @@ namespace QuadTree
             var dy = Math.Abs(circleCenter.y - center.y);
             if(dx > (_bounds.width / 2 + radius)) { return false; }
             if(dy > (_bounds.height / 2 + radius)) { return false; }
-            if(dx < (_bounds.width / 2)) { return true; }
-            if(dy < (_bounds.height / 2)) { return true; }
+            if(dx <= (_bounds.width / 2)) { return true; }
+            if(dy <= (_bounds.height / 2)) { return true; }
             var cornerDist = Math.Pow((dx - _bounds.width / 2), 2) + Math.Pow((dy - _bounds.height / 2), 2);
             return cornerDist <= (radius * radius);
         }
@@ -209,7 +209,7 @@ namespace QuadTree
             else
             {
                 if (point.y > _bounds.y + _bounds.height / 2) return _childD;
-                return _childD;
+                return _childA;
             }
         }
 
@@ -233,8 +233,8 @@ namespace QuadTree
         {
             if (_childA != null) _childA.DrawGizmos();
             if (_childB != null) _childB.DrawGizmos();
-            if (_childC != null) _childB.DrawGizmos();
-            if (_childD != null) _childB.DrawGizmos();
+            if (_childC != null) _childC.DrawGizmos();
+            if (_childD != null) _childD.DrawGizmos();
 
             //draw rect
             Gizmos.color = Color.cyan;
