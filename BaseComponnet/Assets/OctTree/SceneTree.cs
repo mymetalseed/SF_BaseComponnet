@@ -16,7 +16,6 @@ namespace OctTree
 
         protected SceneTreeNode<T> m_Root;
 
-
         public Bounds Bounds
         {
             get
@@ -40,6 +39,7 @@ namespace OctTree
 
         public void Add(T item)
         {
+            //在0深度处插入
             m_Root.Insert(item, 0, m_MaxDepth);
         }
 
@@ -188,17 +188,28 @@ namespace OctTree
             }
         }
 
+        /// <summary>
+        /// 按深度递归插入
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="depth"></param>
+        /// <param name="maxDepth"></param>
+        /// <returns></returns>
         public SceneTreeNode<T> Insert(T obj,int depth,int maxDepth)
         {
+            //列表里已经有了,不继续插入
             if (m_ObjectList.Contains(obj))
                 return this;
+            //小于最大深度才执行插入
             if (depth < maxDepth)
             {
                 SceneTreeNode<T> node = GetContainerNode(obj, depth);
-                if (node != null)
+                if (node != null)//如果节点下面还有节点,代表不是叶子节点,继续搜索下一个深度
                     return node.Insert(obj, depth + 1, maxDepth);
             }
+            //添加到双向链表的头部
             var n = m_ObjectList.AddFirst(obj);
+            //实体设置节点的引用
             obj.SetLinkedListNode(0, n);
             return this;
         }
@@ -212,12 +223,14 @@ namespace OctTree
             int iy = m_ChildNodes.Length == 4 ? 0 : 1;
 
             int nodeIndex = 0;
+            //简称就是,根据八个空间的顶点进行空间遍历
             for(int i = ix; i <= 1; i += 2)
             {
                 for(int k = iy; k <= 1; k += 2)
                 {
                     for(int j= iz; j <= 1; j += 2)
                     {
+                        ///这个东西吧...虽然是createNode,但是第二次访问的时候一定是有值的
                         result = CreateNode(ref m_ChildNodes[nodeIndex], depth,
                             m_Bounds.center + new Vector3(i * m_HalfSize.x * 0.5f, k * m_HalfSize.y * 0.5f, j * m_HalfSize.z * 0.5f),
                             m_HalfSize, obj);
@@ -236,15 +249,18 @@ namespace OctTree
         protected SceneTreeNode<T> CreateNode(ref SceneTreeNode<T> node,int depth,Vector3 centerPos,Vector3 size,T obj)
         {
             SceneTreeNode<T> result = null;
+            //node为空,尝试创建
             if(node == null)
             {
                 Bounds bounds = new Bounds(centerPos, size);
+                //如果当前包围盒包含obj,则创建新节点
                 if (bounds.IsBoundsContainsAnotherBounds(obj.Bounds))
                 {
                     SceneTreeNode<T> newNode = new SceneTreeNode<T>(bounds, depth + 1, m_ChildNodes.Length);
                     node = newNode;
                     result = node;
                 }
+            //node不为空,当做检查,如果当前节点的包围盒包含obj的包围盒,则直接返回当前节点
             }else if (node.Bounds.IsBoundsContainsAnotherBounds(obj.Bounds))
             {
                 result = node;
