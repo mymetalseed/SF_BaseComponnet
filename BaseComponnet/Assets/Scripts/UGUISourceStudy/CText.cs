@@ -5,6 +5,21 @@ using UnityEngine.UI;
 
 public class CText : Text
 {
+    [SerializeField]
+    public float rotAlpha
+    {
+        get
+        {
+            return _rotAlpha;
+        }
+        set
+        {
+            _rotAlpha = value;
+            SetVerticesDirty();
+        }
+    }
+
+    private float _rotAlpha;
 
     UIVertex[] m_Temp2Verts = new UIVertex[4];
     protected override void OnPopulateMesh(VertexHelper toFill)
@@ -21,6 +36,7 @@ public class CText : Text
 
         // Apply the offset to the vertices
         IList<UIVertex> verts = cachedTextGenerator.verts;
+        
         float unitsPerPixel = 1 / pixelsPerUnit;
         int vertCount = verts.Count;
 
@@ -31,6 +47,7 @@ public class CText : Text
             return;
         }
         float minX = 0, minY = 0, maxX = 0, maxY = 0;
+        float height = 0, width = 0,originSlope = 0;
         Vector2 roundingOffset = new Vector2(verts[0].position.x, verts[0].position.y) * unitsPerPixel;
         roundingOffset = PixelAdjustPoint(roundingOffset) - roundingOffset;
         toFill.Clear();
@@ -58,7 +75,7 @@ public class CText : Text
         else
         {
             UIVertex vert;
-            Debug.Log(vertCount);
+
             minX = verts[0].position.x;
             maxX = verts[0].position.x;
             minY = verts[0].position.y;
@@ -86,9 +103,40 @@ public class CText : Text
             }
         }
 
+        height = maxY - minY;
+        width = maxX - minX;
+        originSlope = height / width;
+        originSlope = Mathf.Tan(Mathf.Deg2Rad * _rotAlpha);
+        Debug.LogError(originSlope);
+        float invSlope = 1 / originSlope;
+        Vector2 centerPos = new Vector2(width/2,height/2);
+        float A = invSlope, B = -1,C=maxY- invSlope*minX,B2=1,A2=invSlope*invSlope;
+
+        float fullDist = 2*Mathf.Abs((A * centerPos.x + B * centerPos.y + C)/Mathf.Sqrt(A2+B2));
+        UIVertex tempVert = new UIVertex();
+        for(int i = 0; i < toFill.currentVertCount; ++i)
+        {
+            toFill.PopulateUIVertex(ref tempVert, i);
+            float posX = tempVert.position.x, posY = tempVert.position.y;
+            float nowDist = 2 * Mathf.Abs((A * posX + B * posY + C) / Mathf.Sqrt(A2 + B2));
+            float lv = Mathf.Clamp01(nowDist / fullDist);
+            tempVert.color = Color.Lerp(Color.cyan, Color.black, lv);
+            toFill.SetUIVertex(tempVert, i);
+        }
+
         TextGenerator underlineText = new TextGenerator();
-        underlineText.Populate("-", settings);
+        underlineText.Populate("*", settings);
         IList<UIVertex> lineVer = underlineText.verts;
+
+        Vector2 uv = Vector2.zero;
+        for(int i = 0; i < 4; ++i)
+        {
+            uv.x = uv.x + lineVer[i].uv0.x;
+            uv.y = uv.y + lineVer[i].uv0.y;
+        }
+        uv /= 4;
+
+
         Color tempColor = Color.black;
         minX *= 1.5f;
         maxX *= 1.5f;
@@ -96,27 +144,30 @@ public class CText : Text
         m_Temp2Verts[0] = lineVer[0];
         m_Temp2Verts[0].position = new Vector3(minX, minY, 0);
         m_Temp2Verts[0].color = Color.black;
-        //m_Temp2Verts[0].uv0 = new Vector4(0.0f, 0.08f, 0, 0);
+        m_Temp2Verts[0].uv0 = uv;
 
         m_Temp2Verts[1] = lineVer[1];
         m_Temp2Verts[1].position = new Vector3(maxX, minY, 0);
         m_Temp2Verts[1].color = Color.black;
-        //m_Temp2Verts[1].uv0 = new Vector4(0.0f, 0.08f, 0,0);
+        m_Temp2Verts[1].uv0 = uv;
 
         m_Temp2Verts[2] = lineVer[2];
         m_Temp2Verts[2].position = new Vector3(maxX, minY - 1, 0);
         m_Temp2Verts[2].color = Color.black;
-        //m_Temp2Verts[2].uv0 = new Vector4(0.0f, 0.08f, 0, 0);
+        m_Temp2Verts[2].uv0 = uv;
 
         m_Temp2Verts[3] = lineVer[3];
         m_Temp2Verts[3].position = new Vector3(minX, minY - 1, 0);
         m_Temp2Verts[3].color = Color.black;
-        //m_Temp2Verts[3].uv0 = new Vector4(0.0f, 0.08f, 0, 0);
+        m_Temp2Verts[3].uv0 = uv;
 
         toFill.AddUIVertexQuad(m_Temp2Verts);
 
 
         m_DisableFontTextureRebuiltCallback = false;
     }
+
+
+
 
 }
