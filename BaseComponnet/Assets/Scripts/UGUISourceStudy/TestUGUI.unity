@@ -150,16 +150,16 @@ RectTransform:
   m_GameObject: {fileID: 362895075}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 396011426}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -134.52487, y: 108.6}
-  m_SizeDelta: {x: 70.3167, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -150, y: 439}
+  m_SizeDelta: {x: 1000, y: 92.2536}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &362895077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,7 +193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F60\u597DQA"
+  m_Text: 
 --- !u!222 &362895078
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -461,6 +461,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1460332729}
   - component: {fileID: 1460332728}
+  - component: {fileID: 1460332730}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -485,6 +486,8 @@ PlayableDirector:
   m_SceneBindings:
   - key: {fileID: 5688988495452363967, guid: c4753369069d10e4190f987815d7d712, type: 2}
     value: {fileID: 396011422}
+  - key: {fileID: 661273355853515935, guid: c4753369069d10e4190f987815d7d712, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &1460332729
@@ -501,6 +504,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1460332730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460332727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f56767f63e7cc9489080a228f18a528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  font: {fileID: 12800000, guid: 8a6241552e75f0d4e9a9104b8eddf245, type: 3}
 --- !u!1 &1813070778
 GameObject:
   m_ObjectHideFlags: 0
