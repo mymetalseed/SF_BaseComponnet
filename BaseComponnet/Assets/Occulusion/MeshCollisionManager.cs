@@ -51,15 +51,56 @@ public class MeshCollisionManager : MonoBehaviour
             {
                 if (i != j)
                 {
-                    OBB obbI = OBBHelper.GetOBBFromMeshFilter(tl[i].mf);
-                    OBB obbJ = OBBHelper.GetOBBFromMeshFilter(tl[j].mf);
-                    
-                    if (OBBHelper.OverlapOBB_OBB(obbI, obbJ))
+                    if(tl[i].bt == BoundsType.AABB || tl[j].bt == BoundsType.AABB)
                     {
-                        flag = true;
-                        break;
+                        if(tl[i].bt == BoundsType.AABB)
+                        {
+                            Bounds aabbI = OBBHelper.GetAABBFromMeshFilter(tl[i].mf);
+                            OBB obbJ = OBBHelper.GetOBBFromMeshFilter(tl[j].mf);
+
+                            if (OBBHelper.OverlapAABB_OBB(aabbI, obbJ))
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            OBB obbI = OBBHelper.GetOBBFromMeshFilter(tl[i].mf);
+                            Bounds aabbJ = OBBHelper.GetAABBFromMeshFilter(tl[j].mf);
+
+                            if (OBBHelper.OverlapAABB_OBB(aabbJ, obbI))
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
                     }
-                    
+                    else
+                    {
+                        if (tl[i].bt == BoundsType.OBB && tl[i].bt == BoundsType.OBB)
+                        {
+                            OBB obbI = OBBHelper.GetOBBFromMeshFilter(tl[i].mf);
+                            OBB obbJ = OBBHelper.GetOBBFromMeshFilter(tl[j].mf);
+
+                            if (OBBHelper.OverlapOBB_OBB(obbI, obbJ))
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            Bounds aabbI = OBBHelper.GetAABBFromMeshFilter(tl[i].mf);
+                            Bounds aabbJ = OBBHelper.GetAABBFromMeshFilter(tl[j].mf);
+
+                            if (OBBHelper.OverlapAABB_AABB(aabbI, aabbJ))
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             tl[i].collision = flag;

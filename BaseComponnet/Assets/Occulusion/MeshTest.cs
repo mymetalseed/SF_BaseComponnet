@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BoundsType
+{
+    AABB=1,
+    OBB=2
+}
+
 public class MeshTest : MonoBehaviour
 {
     public MeshFilter mf;
@@ -9,6 +15,7 @@ public class MeshTest : MonoBehaviour
     List<Vector4> eightPoint;
 
     public bool collision = false;
+    public BoundsType bt = BoundsType.OBB;
 
     private void Awake()
     {

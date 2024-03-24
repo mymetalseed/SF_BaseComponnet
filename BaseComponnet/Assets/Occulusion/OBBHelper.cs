@@ -107,6 +107,50 @@ public static class OBBHelper
         return obb;
     }
 
+    public static Bounds GetAABBFromMeshFilter(MeshFilter mf)
+    {
+        Bounds bounds = new Bounds();
+        Vector4 ori = new Vector4(
+            mf.mesh.bounds.center.x,
+            mf.mesh.bounds.center.y,
+            mf.mesh.bounds.center.z,
+            1.0f
+        );
+        bounds.center = mf.transform.localToWorldMatrix * ori;
+        bounds.size = Vector3.Scale(mf.mesh.bounds.size, mf.transform.lossyScale);
+        return bounds;
+    }
 
+    public static OBB GetOBBFromAABB(Bounds bounds)
+    {
+        OBB obb = new OBB();
+        obb.XAxis = Vector3.right;
+        obb.YAxis = Vector3.forward;
+        obb.ZAxis = Vector3.up;
+
+        Vector3 halfSize = bounds.size / 2;
+
+        obb.P0 = new Vector4(bounds.center.x + halfSize.x ,bounds.center.y +  halfSize.y ,bounds.center.z +  halfSize.z, 1.0f);
+        obb.P1 = new Vector4(bounds.center.x + -halfSize.x,bounds.center.y +  halfSize.y ,bounds.center.z +  halfSize.z, 1.0f);
+        obb.P2 = new Vector4(bounds.center.x + halfSize.x ,bounds.center.y +  -halfSize.y,bounds.center.z +  halfSize.z, 1.0f);
+        obb.P3 = new Vector4(bounds.center.x + halfSize.x ,bounds.center.y +  halfSize.y ,bounds.center.z +  -halfSize.z, 1.0f);
+        obb.P4 = new Vector4(bounds.center.x + -halfSize.x,bounds.center.y +  -halfSize.y,bounds.center.z +  halfSize.z, 1.0f);
+        obb.P5 = new Vector4(bounds.center.x + -halfSize.x,bounds.center.y +  halfSize.y ,bounds.center.z +  -halfSize.z, 1.0f);
+        obb.P6 = new Vector4(bounds.center.x + -halfSize.x,bounds.center.y +  -halfSize.y,bounds.center.z +  -halfSize.z, 1.0f);
+        obb.P7 = new Vector4(bounds.center.x + halfSize.x ,bounds.center.y + -halfSize.y ,bounds.center.z + -halfSize.z, 1.0f);
+
+        return obb;
+    }
+
+    public static bool OverlapAABB_OBB(Bounds bounds,OBB obb)
+    {
+        OBB other = GetOBBFromAABB(bounds);
+        return OverlapOBB_OBB(other, obb);
+    }
+
+    public static bool OverlapAABB_AABB(Bounds bounds,Bounds bounds2)
+    {
+        return bounds.Intersects(bounds2);
+    }
 
 }
